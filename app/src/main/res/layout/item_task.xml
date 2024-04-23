@@ -1,0 +1,107 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+
+    <LinearLayout
+        android:id="@+id/taskLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_supp">
+
+        <CheckBox
+            android:id="@+id/finishSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#FF4081"
+            android:elevation="10dp"
+            android:layout_marginEnd="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/taskLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintEnd_toStartOf="@id/btn_supp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- TextView pour le nom de la tâche -->
+            <TextView
+                android:id="@+id/task_nom"
+                android:layout_width="244dp"
+                android:layout_height="wrap_content"
+                android:text="Task name"
+                android:textColor="@android:color/black" />
+
+            <!-- Ajout d'un espace flexible pour pousser la date en bas -->
+            <Space
+                android:layout_width="227dp"
+                android:layout_height="11dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/taskLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@id/btn_supp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+            <!-- TextView pour la date limite -->
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="btn_sup"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
+
+                <TextView
+                    android:id="@+id/task_dateLimite"
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+                    android:maxEms="5"
+                    android:layout_marginLeft="5dp"
+                    android:text="datesortie"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp"
+                    tools:ignore="MissingConstraints" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_supp"
+        android:contentDescription="btn_sup"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@android:drawable/ic_menu_delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
