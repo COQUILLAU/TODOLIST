@@ -32,7 +32,7 @@ class DAOTask() {
         close()
     }
     // requête select * from Task (table)
-    fun getLesJeuxAvecId(): MutableMap<Int,Task> {
+    fun getLesJeuxAvecId(): MutableMap<Int, Task> {
         // ouverture en lecture seule pour les getters
         maBase = monBDHelper.readableDatabase
         // le select sera réalisé via l'ORM
@@ -45,7 +45,7 @@ class DAOTask() {
         )
         var lesTasks: MutableList<Task> = mutableListOf<Task>()
         var lesId: MutableList<Int> = mutableListOf<Int>()
-        var laTableTask: MutableMap<Int,Task> = mutableMapOf<Int, Task>()
+        var laTableTask: MutableMap<Int, Task> = mutableMapOf<Int, Task>()
 
         // il faut traiter le cursor qui récupère
         // le record set du select (résultat)
@@ -54,7 +54,8 @@ class DAOTask() {
             // s'il n'est pas vide, on le parcourt
             while (cursor.moveToNext()) {
                 // on instancie un jeu avec les colonnes de la requête
-                var unTask = Task(cursor.getString(1), cursor.getString(2))
+                var unTask =
+                    Task(cursor.getString(1), cursor.getString(2))
                 // on ajoute le jeu à la liste
                 lesTasks.add(unTask)
                 lesId.add(cursor.getInt(0))
@@ -84,7 +85,8 @@ class DAOTask() {
             // s'il n'est pas vide, on le parcourt
             while (cursor.moveToNext()) {
                 // on instancie un jeu avec les colonnes de la requête
-                var unTask = Task(cursor.getString(0), cursor.getString(1))
+                var unTask =
+                    Task(cursor.getString(0), cursor.getString(1))
                 // on ajoute le jeu à la liste
                 lesTasks.add(unTask)
             }
@@ -109,7 +111,7 @@ class DAOTask() {
     }
 
     // requête insert
-    public  fun insertTask(unTask:Task) : Int {
+    public  fun insertTask(unTask: Task) : Int {
         open()
         // écrire la requête insert into
         // ou utiliser les fonctions ORM
@@ -125,16 +127,16 @@ class DAOTask() {
         close()
         return result
     }
-    public fun init(context: Context) {
+     fun init(context: Context) {
         monBDHelper = BDHelper(context)
     }
 
     // accès à la base de données
-    public fun open() {
+    fun open() {
         maBase = monBDHelper.writableDatabase
     }
 
-    public  fun close() {
+    fun close() {
         maBase.close()
     }
 }

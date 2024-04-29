@@ -34,12 +34,12 @@ class TaskAdapter(var lesTasks: List<Task>, var unListener: TaskListener): Recyc
     // ci-dessous, le = remplace le return lesJeux.size
     override fun getItemCount(): Int = lesTasks.size
 
-} // fin de la classe JeuAdapter
+} // fin de la classe TaskAdapter
 
-// JeuViewHolder hérite de RecyclerView.ViewHolder en utilisant une view (item_jeu)
+// TaskViewHolder hérite de RecyclerView.ViewHolder en utilisant une view (item_task)
 class TaskViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     val task_nom: TextView = itemView.findViewById(R.id.task_nom)
     val task_dateLimite: TextView = itemView.findViewById(R.id.task_dateLimite)
     // je récupère le bouton de la poubelle
     val btn_supp : ImageButton = itemView.findViewById(R.id.btn_supp)
-}// fin de la classe JeuViewHolder
+}// fin de la classe TaskViewHolder

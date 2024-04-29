@@ -44,7 +44,7 @@
                 android:id="@+id/task_nom"
                 android:layout_width="244dp"
                 android:layout_height="wrap_content"
-                android:text="Task name"
+                android:text="Tâche nom"
                 android:textColor="@android:color/black" />
 
             <!-- Ajout d'un espace flexible pour pousser la date en bas -->
@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:maxEms="5"
                     android:layout_marginLeft="5dp"
-                    android:text="datesortie"
+                    android:text="datelimite"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="12sp"
                     tools:ignore="MissingConstraints" />
