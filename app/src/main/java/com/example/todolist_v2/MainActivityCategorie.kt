@@ -4,7 +4,9 @@ package com.example.todolist_v2
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +28,7 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
     // Liste de catégories
     var lesCategories: MutableList<Categorie> = mutableListOf<Categorie>()
     var lesId: MutableList<Int> = mutableListOf<Int>()
-    // Table de correspondance entre ID et tâche
+    // Table de correspondance entre ID et categorie
     var laTableCategorie: MutableMap<Int, Categorie> = mutableMapOf<Int, Categorie>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +42,7 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_task -> {
-                    // Redirection vers l'activité des tâches
+                    // Redirection vers l'activité des categorie
                     val intent = Intent(this, MainActivityTask::class.java)
                     startActivity(intent)
                     true
@@ -108,13 +110,31 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
         return fichierJson!!
     }
 
-    // Gestion du clic sur un élément de la liste des tâches
+    // Gestion du clic sur un élément de la liste des categorie
     override fun onItemClicked(position: Int) {
-
+        val intent = Intent(this, ModificationCategorieActivity::class.java)
+        intent.putExtra(CATEGORIE_NOM, lesCategories[position].nom)
+        intent.putExtra(CATEGORIE_POS, position)
     }
 
-    // Gestion du clic sur le bouton de suppression d'une tâche
+    // Gestion du clic sur le bouton de suppression d'une categorie
     override fun onSuppClicked(position: Int) {
-
+        var categorie_sup: String = lesCategories[position].nom
+        var builder = AlertDialog.Builder(this)
+        builder.setTitle("Suppression de la categorie : ${lesCategories[position].nom}")
+            .setMessage("Etes-vous sur de vouloir supprimer cette tâche ?")
+            .setIcon(android.R.drawable.ic_menu_delete)
+            .setPositiveButton("Supprimer") { dialog, _ ->
+                dialog.dismiss()
+                sgbd.deleteCategorie(lesCategories[position].nom, lesId[position])
+                lesCategories.removeAt(position)
+                categorieRecyclerView.adapter?.notifyItemRemoved(position)
+                runOnUiThread {
+                    Toast.makeText(this, "La categorie ${categorie_sup} a été supprimé", Toast.LENGTH_LONG).show()
+                }
+            }
+            .setNegativeButton("Annuler", null)
+        var alertDialog = builder.create()
+        alertDialog.show()
     }
 }

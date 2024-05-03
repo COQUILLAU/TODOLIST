@@ -43,6 +43,7 @@
             <TextView
                 android:id="@+id/task_nom"
                 android:layout_width="244dp"
+                android:textSize="48px"
                 android:layout_height="wrap_content"
                 android:text="Tâche nom"
                 android:textColor="@android:color/black" />
@@ -82,7 +83,8 @@
                     android:layout_marginLeft="5dp"
                     android:text="datelimite"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="12sp"
+                    android:textSize="38px"
+                    android:textStyle="bold"
                     tools:ignore="MissingConstraints" />
 
             </LinearLayout>

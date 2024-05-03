@@ -35,6 +35,7 @@
             <!-- TextView pour le nom de la tâche -->
             <TextView
                 android:id="@+id/categorie_nom"
+                android:textSize="48px"
                 android:layout_width="244dp"
                 android:layout_height="wrap_content"
                 android:text="Categorie nom"

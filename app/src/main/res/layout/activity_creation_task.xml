@@ -10,12 +10,14 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Ajouter une Tâche"
-        android:textSize="25sp"
-        android:textColor="@android:color/black"
+        android:layout_width="1250px"
+        android:layout_height="60dp"
+        android:padding="12dp"
+        android:background="#212121"
+        android:text="Ajoutez une tâche"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -58,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:backgroundTint="@color/black"
-        android:text="Ajouter une tâche"
+        android:text="Ajouter"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
