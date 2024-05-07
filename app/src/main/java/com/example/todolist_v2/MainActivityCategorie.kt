@@ -1,20 +1,27 @@
 // MainActivityCategorie.kt
 package com.example.todolist_v2
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist_v2.model.DAOCategorie
 import com.example.todolist_v2.model.Categorie
+import com.example.todolist_v2.model.Task
 import com.example.todolist_v2.support.CategorieAdapter
 import com.example.todolist_v2.support.CategorieListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.IOException
@@ -30,6 +37,49 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
     var lesId: MutableList<Int> = mutableListOf<Int>()
     // Table de correspondance entre ID et categorie
     var laTableCategorie: MutableMap<Int, Categorie> = mutableMapOf<Int, Categorie>()
+
+    lateinit var ajouterCategorie: FloatingActionButton
+
+    // Gestion du résultat de l'activité de modification d'une catégorie
+    private val modificationCategorieActivityResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val nomCategorie = data?.getStringExtra(CATEGORIE_NOM)
+                val posCategorie = data?.getIntExtra(CATEGORIE_POS, -1)
+                if (posCategorie != -1) {
+                    lesCategories[posCategorie!!].nom = nomCategorie!!
+                    if (sgbd.updateCategorie(lesCategories[posCategorie!!], lesId[posCategorie!!]) != 0) {
+                        runOnUiThread {
+                            Toast.makeText(
+                                this,
+                                "La catégorie ${lesCategories[posCategorie!!].nom} a été modifié",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    categorieRecyclerView.adapter?.notifyItemChanged(posCategorie)
+                }
+                Log.i("liste", "liste modifiée ${lesCategories.toString()}")
+            }
+        }
+
+    // Gestion du résultat de l'activité de création d'une tâche
+    private val creationCategorieActivityResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val nomC = data?.getStringExtra(CATEGORIE_NOM)
+                val nouvelleCategorie = Categorie(nomC.toString())
+                sgbd.insertCategorie(nouvelleCategorie)
+                lesCategories.add(0, nouvelleCategorie)
+                Log.i("categorie", "Categorie ajouter ${lesCategories.toString()}")
+                categorieRecyclerView.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    Toast.makeText(this, "La catégorie a été ajouté", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +98,25 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
                     true
                 }
                 R.id.navigation_categorie -> {
+                    // Initialiser les données en dur des catégories
+                    initDonneesEnDurCategorie()
+                    // Gérer le clic sur le bouton flottant pour ajouter une catégorie
+                    ajouterCategorie = findViewById(R.id.cat_ajouter)
+                    ajouterCategorie.setOnClickListener {
+                        val intent = Intent(this, CreationCategorieActivity::class.java)
+                        creationCategorieActivityResult.launch(intent)
+                    }
+                    // Ajuster les marges pour éviter le chevauchement avec la barre de navigation
+                    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+                        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                        v.setPadding(
+                            systemBars.left,
+                            systemBars.top,
+                            systemBars.right,
+                            systemBars.bottom
+                        )
+                        insets
+                    }
                     true
                 }
                 else -> false
@@ -115,6 +184,8 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
         val intent = Intent(this, ModificationCategorieActivity::class.java)
         intent.putExtra(CATEGORIE_NOM, lesCategories[position].nom)
         intent.putExtra(CATEGORIE_POS, position)
+        modificationCategorieActivityResult.launch(intent)
+
     }
 
     // Gestion du clic sur le bouton de suppression d'une categorie
@@ -122,7 +193,7 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
         var categorie_sup: String = lesCategories[position].nom
         var builder = AlertDialog.Builder(this)
         builder.setTitle("Suppression de la categorie : ${lesCategories[position].nom}")
-            .setMessage("Etes-vous sur de vouloir supprimer cette tâche ?")
+            .setMessage("Etes-vous sur de vouloir supprimer cette catégorie ?")
             .setIcon(android.R.drawable.ic_menu_delete)
             .setPositiveButton("Supprimer") { dialog, _ ->
                 dialog.dismiss()

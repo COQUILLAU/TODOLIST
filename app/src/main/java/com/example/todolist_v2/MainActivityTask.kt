@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
@@ -55,7 +57,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
                         runOnUiThread {
                             Toast.makeText(
                                 this,
-                                "Le jeu ${lesTasks[posTask!!].nom} a été modifié",
+                                "La tâche ${lesTasks[posTask!!].nom} a été modifié",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -78,6 +80,9 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
                 lesTasks.add(0, nouveauTask)
                 Log.i("tâche", "tâche modifiée ${lesTasks.toString()}")
                 taskRecyclerView.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    Toast.makeText(this, "La tâche a été ajouté", Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -95,7 +100,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
                     // Initialiser les données en dur des tâches
                     initDonneesEnDurTask()
                     // Gérer le clic sur le bouton flottant pour ajouter une tâche
-                    ajouterTask = findViewById(R.id.fab_ajouter)
+                    ajouterTask = findViewById(R.id.tache_ajouter)
                     ajouterTask.setOnClickListener {
                         val intent = Intent(this, CreationTaskActivity::class.java)
                         creationTaskActivityResult.launch(intent)
@@ -207,4 +212,5 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
         var alertDialog = builder.create()
         alertDialog.show()
     }
+
 }

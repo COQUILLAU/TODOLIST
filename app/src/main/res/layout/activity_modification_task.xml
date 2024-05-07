@@ -7,19 +7,42 @@
     android:layout_height="match_parent"
     tools:context=".ModificationTaskActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="1250px"
-        android:layout_height="60dp"
-        android:padding="12dp"
+    <LinearLayout
+        android:id="@+id/taskLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="#212121"
-        android:text="Modifier une tâche"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
-/>
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Bouton de flèche retour -->
+        <ImageButton
+            android:id="@+id/backArrow"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Back"
+            android:layout_height="60dp"
+            android:background="#212121"
+            android:padding="12dp"/>
+
+        <!-- Titre -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="1250px"
+            android:layout_height="60dp"
+            android:padding="12dp"
+            android:background="#212121"
+            android:text="Modifier une tâche"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </LinearLayout>
+
 
     <EditText
         android:id="@+id/task_name"
@@ -28,11 +51,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Titre du jeu"
+        android:hint="tache nom"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"/>
+        app:layout_constraintTop_toBottomOf="@+id/taskLayout"/>
 
     <EditText
         android:id="@+id/task_dateLimite"
@@ -41,7 +64,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Date de sortie"
+        android:hint="Date de limite"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -37,7 +37,7 @@
 
     <!-- Bouton d'ajout -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_ajouter"
+        android:id="@+id/tache_ajouter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

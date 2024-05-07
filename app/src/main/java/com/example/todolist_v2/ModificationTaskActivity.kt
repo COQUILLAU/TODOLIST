@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -43,6 +44,13 @@ class ModificationTaskActivity: AppCompatActivity() {
             task_date = task_dateLimite.text.toString()
             isUpdated = true
             Toast.makeText(this, "Le jeu $task_nom a été modifié", Toast.LENGTH_LONG).show()
+        }
+        // Récupération de la référence à l'icône de flèche retour (backArrow)
+        val backArrow = findViewById<ImageButton>(R.id.backArrow)
+        // Ajout d'un OnClickListener à l'icône de flèche retour
+        backArrow.setOnClickListener {
+            // Appel de la méthode onBackPressed() pour revenir en arrière
+            onBackPressed()
         }
     }
     // codage de l'action "retour en arrière"

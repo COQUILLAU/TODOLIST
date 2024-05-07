@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -61,6 +62,14 @@ class CreationTaskActivity : AppCompatActivity() {
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
+
+        // Récupération de la référence à l'icône de flèche retour (backArrow)
+        val backArrow = findViewById<ImageButton>(R.id.backArrow)
+        // Ajout d'un OnClickListener à l'icône de flèche retour
+        backArrow.setOnClickListener {
+            // Appel de la méthode onBackPressed() pour revenir en arrière
+            onBackPressed()
+        }
     }
 
     // Fonction pour afficher le sélecteur de date et d'heure
@@ -97,6 +106,10 @@ class CreationTaskActivity : AppCompatActivity() {
         )
         // Affichage du sélecteur de date
         datePickerDialog.show()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }
 

@@ -8,18 +8,40 @@
     android:layout_height="match_parent"
     tools:context=".CreationTaskActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="1250px"
-        android:layout_height="60dp"
-        android:padding="12dp"
+    <LinearLayout
+        android:id="@+id/taskLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="#212121"
-        android:text="Ajoutez une tâche"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Bouton de flèche retour -->
+        <ImageButton
+            android:id="@+id/backArrow"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Back"
+            android:layout_height="60dp"
+            android:background="#212121"
+            android:padding="12dp"/>
+
+        <!-- Titre -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="1250px"
+            android:layout_height="60dp"
+            android:padding="12dp"
+            android:background="#212121"
+            android:text="Ajoutez une tâche"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/task_name"
@@ -34,7 +56,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"/>
+        app:layout_constraintTop_toBottomOf="@+id/taskLayout"/>
 
     <EditText
         android:id="@+id/task_dateLimite"
