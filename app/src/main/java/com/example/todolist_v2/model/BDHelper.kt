@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 
 class BDHelper(context: Context) :
-    SQLiteOpenHelper(context, "todolists", null, 1) {
+    SQLiteOpenHelper(context, "todolist", null, 1) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         createTableTask(db)
@@ -32,7 +32,9 @@ class BDHelper(context: Context) :
             CREATE TABLE Task (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nom VARCHAR(30) NOT NULL,
-                datelimite VARCHAR(30) NOT NULL
+                datelimite VARCHAR(30) NOT NULL,
+                idCategorie INTEGER NOT NULL,
+                FOREIGN KEY (idCategorie) REFERENCES Categorie(id)
             )
         """.trimIndent()
         db?.execSQL(createTableTask)

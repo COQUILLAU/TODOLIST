@@ -38,6 +38,8 @@ class ModificationCategorieActivity: AppCompatActivity() {
             categorie_nom = categorie_name.text.toString()
             isUpdated = true
             Toast.makeText(this, "Le jeu $categorie_nom a été modifié", Toast.LENGTH_LONG).show()
+            // Appeler onBackPressed pour revenir en arrière
+            onBackPressed()
         }
 
         // Récupération de la référence à l'icône de flèche retour (backArrow)

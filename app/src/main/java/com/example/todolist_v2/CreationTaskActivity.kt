@@ -7,39 +7,72 @@ import android.os.Bundle
 import android.util.Log
 import android.content.Intent
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Spinner
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.todolist_v2.model.Categorie
+import com.example.todolist_v2.model.DAOTask
 import java.util.*
 
 class CreationTaskActivity : AppCompatActivity() {
     lateinit var btn_crea: Button
     lateinit var task_name: EditText
     lateinit var task_dateLimite: EditText
+    lateinit var spinnerCategories: Spinner
+    var categoriesList: MutableList<Categorie> = mutableListOf() // Liste des catégories
+
+    lateinit var sgbd: DAOTask // DAO pour gérer les opérations sur les tâches
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creation_task)
+
+        // Initialisation du DAO pour les opérations sur les tâches
+        sgbd = DAOTask()
+        sgbd.init(this)
 
         // Récupération des références des vues
         task_name = findViewById(R.id.task_name)
         task_dateLimite = findViewById(R.id.task_dateLimite)
         btn_crea = findViewById(R.id.btn_crea)
 
+        // Récupération de la référence à l'icône de flèche retour (backArrow)
+        val backArrow = findViewById<ImageButton>(R.id.backArrow)
+        // Ajout d'un OnClickListener à l'icône de flèche retour
+        backArrow.setOnClickListener {
+            // Appel de la méthode onBackPressed() pour revenir en arrière
+            onBackPressed()
+        }
+
         // Configuration du bouton pour afficher le sélecteur de date et d'heure
         task_dateLimite.setOnClickListener {
             showDateTimePicker()
         }
 
+        // Configuration du Spinner pour afficher les catégories
+        spinnerCategories = findViewById(R.id.spinner_categories)
+        // Récupérer les catégories depuis la base de données ou le DAO
+        categoriesList.addAll(sgbd.getLesCategories())
+
+        // Adapter le Spinner avec les noms de catégories récupérés
+        val categorieNames = categoriesList.map { it.nom }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categorieNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCategories.adapter = adapter
+
         // Configuration du bouton pour ajouter une tâche
         btn_crea.setOnClickListener {
             val nomT = task_name.text.toString()
             val dateT = task_dateLimite.text.toString()
-            Log.i("creaTask", "-> $nomT -> $dateT")
+            val categorieT = spinnerCategories.selectedItemPosition // Récupérer l'index de la catégorie sélectionnée
+
+            Log.i("creaTask", "-> $nomT -> $dateT -> Catégorie: $categorieT")
 
             // Si le nom de la tâche est vide, on ne fait rien
             if (nomT.isEmpty()) {
@@ -55,20 +88,13 @@ class CreationTaskActivity : AppCompatActivity() {
 
             // Création de l'intent avec les données de la tâche
             val intent = Intent()
-            intent.putExtra(TASK_NOM, nomT)
-            intent.putExtra(TASK_DATE, dateT)
+            intent.putExtra(MainActivityTask.TASK_NOM, nomT)
+            intent.putExtra(MainActivityTask.TASK_DATE, dateT)
+            intent.putExtra(MainActivityTask.TASK_CATEGORIE, categorieT)
 
             // Retour à l'activité précédente avec les données de la tâche
             setResult(Activity.RESULT_OK, intent)
             finish()
-        }
-
-        // Récupération de la référence à l'icône de flèche retour (backArrow)
-        val backArrow = findViewById<ImageButton>(R.id.backArrow)
-        // Ajout d'un OnClickListener à l'icône de flèche retour
-        backArrow.setOnClickListener {
-            // Appel de la méthode onBackPressed() pour revenir en arrière
-            onBackPressed()
         }
     }
 
@@ -112,4 +138,3 @@ class CreationTaskActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 }
-

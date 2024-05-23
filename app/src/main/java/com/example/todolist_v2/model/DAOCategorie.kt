@@ -11,13 +11,31 @@ class DAOCategorie() {
 
 
     fun testBase(): Int {
-        open()
-        val req: String = "select count(nom) from Categorie";
-        val cursor = maBase.rawQuery(req, null)
-        cursor.moveToNext()
-        Log.i("sgbd", " test Categorie : " + cursor.getInt(0))
-        close()
-        return cursor.getInt(0)
+        open() // Ouvre la connexion à la base de données
+        val reqCount: String = "select count(nom) from Categorie"; // Requête SQL pour compter les enregistrements
+        val cursorCount = maBase.rawQuery(reqCount, null) // Exécute la requête de comptage
+        cursorCount.moveToNext() // Déplace le curseur sur le premier résultat
+        val count = cursorCount.getInt(0) // Récupère le nombre d'enregistrements
+        Log.i("sgbd", "Nombre total de catégories : $count") // Affiche le nombre d'enregistrements dans les logs
+
+        // Requête pour récupérer toutes les lignes de la table Categorie
+        val reqTable: String = "select * from Categorie"
+        val cursorTable = maBase.rawQuery(reqTable, null) // Exécute la requête pour récupérer toutes les lignes
+
+        // Affichage des données de la table Categorie
+        if (cursorTable.count > 0) {
+            Log.i("sgbd", "Contenu de la table Categorie :")
+            while (cursorTable.moveToNext()) {
+                val id = cursorTable.getInt(cursorTable.getColumnIndex("id"))
+                val nom = cursorTable.getString(cursorTable.getColumnIndex("nom"))
+                Log.i("sgbd", "   id: $id, nom: $nom")
+            }
+        } else {
+            Log.i("sgbd", "La table Categorie est vide.")
+        }
+
+        close() // Ferme la connexion à la base de données
+        return count // Retourne le nombre d'enregistrements
     }
 
     fun deleteCategorie(nom: String, i: Int) {
@@ -36,19 +54,22 @@ class DAOCategorie() {
             null, null, null, null,
             "nom"
         )
-        var lesCategories: MutableList<Categorie> = mutableListOf<Categorie>()
-        var laTableCategorie: MutableMap<Int, Categorie> = mutableMapOf<Int, Categorie>()
+        var laTableCategorie: MutableMap<Int, Categorie> = mutableMapOf()
 
-        if (cursor.count > 0) {
-            while (cursor.moveToNext()) {
-                var unCategorie = Categorie(cursor.getString(1))
-                lesCategories.add(unCategorie)
-                laTableCategorie.put(cursor.getInt(0), unCategorie)
-            }
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndex("id"))
+                val nom = cursor.getString(cursor.getColumnIndex("nom"))
+                val uneCategorie = Categorie(id, nom)
+                laTableCategorie[id] = uneCategorie
+            } while (cursor.moveToNext())
         }
+
+        cursor?.close()
         close()
         return laTableCategorie
     }
+
 
     fun updateCategorie(unCategorie: Categorie, i: Int): Int {
         open()
@@ -66,6 +87,7 @@ class DAOCategorie() {
         val values = ContentValues()
         values.put("nom", unCategorie.nom)
         val result = maBase.insert("Categorie", null, values).toInt()
+        Log.i("updateCategorie", "result ->  $result values -> ${values.toString()}")
         close()
         return result
     }
@@ -86,20 +108,26 @@ class DAOCategorie() {
         maBase = monBDHelper.readableDatabase
         val cursor = maBase.query(
             "Categorie",
-            arrayOf("nom"),
+            arrayOf("id", "nom"),
             null, null, null, null,
             "nom"
         )
-        var lesCategories: MutableList<Categorie> = mutableListOf<Categorie>()
-        if (cursor.count > 0) {
-            while (cursor.moveToNext()) {
-                var unCategorie = Categorie(cursor.getString(0))
-                lesCategories.add(unCategorie)
-            }
+        var lesCategories: MutableList<Categorie> = mutableListOf()
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndex("id"))
+                val nom = cursor.getString(cursor.getColumnIndex("nom"))
+                val uneCategorie = Categorie(id, nom)
+                lesCategories.add(uneCategorie)
+            } while (cursor.moveToNext())
         }
+
+        cursor?.close()
         close()
         return lesCategories
     }
+
 
 }
 

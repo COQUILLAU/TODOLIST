@@ -89,6 +89,18 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/task_idCategorie"
+                android:layout_width="237dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:maxEms="5"
+                android:text="idCategorie"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="38px"
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
+
         </LinearLayout>
 
 

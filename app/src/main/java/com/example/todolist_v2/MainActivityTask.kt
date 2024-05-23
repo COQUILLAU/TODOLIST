@@ -1,12 +1,9 @@
-// MainActivityTask.kt
 package com.example.todolist_v2
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
@@ -18,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist_v2.model.DAOTask
+import com.example.todolist_v2.model.DAOCategorie
 import com.example.todolist_v2.model.Task
 import com.example.todolist_v2.support.TaskAdapter
 import com.example.todolist_v2.support.TaskListener
@@ -36,11 +34,20 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
     // DAO pour gérer les opérations sur les tâches
     lateinit var sgbd: DAOTask
     // Liste de tâches
-    var lesTasks: MutableList<Task> = mutableListOf<Task>()
+    var lesTasks: MutableList<Task> = mutableListOf()
     // Liste des IDs des tâches
-    var lesId: MutableList<Int> = mutableListOf<Int>()
+    var lesId: MutableList<Int> = mutableListOf()
     // Table de correspondance entre ID et tâche
-    var laTableTask: MutableMap<Int, Task> = mutableMapOf<Int, Task>()
+    var laTableTask: MutableMap<Int, Task> = mutableMapOf()
+    var lesCategories: MutableMap<Int, String> = mutableMapOf()
+
+    // Constants for passing data between activities
+    companion object {
+        const val TASK_NOM = "TASK_NOM"
+        const val TASK_DATE = "TASK_DATE"
+        const val TASK_CATEGORIE = "TASK_CATEGORIE"
+        const val TASK_POS = "TASK_POS"
+    }
 
     // Gestion du résultat de l'activité de modification d'une tâche
     private val modificationTaskActivityResult =
@@ -49,15 +56,17 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
                 val data = result.data
                 val nomTask = data?.getStringExtra(TASK_NOM)
                 val dateTask = data?.getStringExtra(TASK_DATE)
+                val categorieTask = data?.getIntExtra(TASK_CATEGORIE, -1)
                 val posTask = data?.getIntExtra(TASK_POS, -1)
                 if (posTask != -1) {
                     lesTasks[posTask!!].nom = nomTask!!
                     lesTasks[posTask!!].dateLimite = dateTask!!
+                    lesTasks[posTask!!].idCategorie = categorieTask!!
                     if (sgbd.updateTask(lesTasks[posTask!!], lesId[posTask!!]) != 0) {
                         runOnUiThread {
                             Toast.makeText(
                                 this,
-                                "La tâche ${lesTasks[posTask!!].nom} a été modifié",
+                                "La tâche ${lesTasks[posTask!!].nom} a été modifiée",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -73,15 +82,16 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
-                val nomJ = data?.getStringExtra(TASK_NOM)
-                val dateJ = data?.getStringExtra(TASK_DATE)
-                val nouveauTask = Task(nomJ!!, dateJ!!)
+                val nomT = data?.getStringExtra(TASK_NOM)
+                val dateT = data?.getStringExtra(TASK_DATE)
+                val categorieT = data?.getIntExtra(TASK_CATEGORIE, -1)
+                val nouveauTask = Task(nomT!!, dateT!!, categorieT!!)
                 sgbd.insertTask(nouveauTask)
                 lesTasks.add(0, nouveauTask)
-                Log.i("tâche", "tâche modifiée ${lesTasks.toString()}")
+                Log.i("tâche", "tâche ajoutée ${lesTasks.toString()}")
                 taskRecyclerView.adapter?.notifyDataSetChanged()
                 runOnUiThread {
-                    Toast.makeText(this, "La tâche a été ajouté", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "La tâche a été ajoutée", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -136,6 +146,8 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
         // Initialiser le DAO
         sgbd = DAOTask()
         sgbd.init(this)
+        lesCategories = sgbd.getLesCategories().associate { it.id to it.nom }.toMutableMap()
+
         // Vérifier si des données existent déjà dans la base de données
         if (sgbd.testBase() > 0) {
             // Si oui, les récupérer
@@ -148,7 +160,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
             traiteJson(jsonFic)
         }
         // Instancier l'adaptateur et l'alimenter avec les données
-        val adapter = TaskAdapter(lesTasks, this)
+        val adapter = TaskAdapter(lesTasks, this, lesCategories) // Passer lesCategories ici
         // Instancier le gestionnaire de mise en page
         val layoutManager = LinearLayoutManager(this)
         taskRecyclerView.adapter = adapter
@@ -157,12 +169,13 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
 
     // Traitement d'un fichier JSON pour obtenir les données des tâches
     private fun traiteJson(jsonFic: String) {
-        var jsonTab = JSONArray(jsonFic)
+        val jsonTab = JSONArray(jsonFic)
         for (i in 0 until jsonTab.length()) {
-            var jsonObj = jsonTab.getJSONObject(i)
-            var leNom: String = jsonObj.getString("nom")
-            var laDate: String = jsonObj.getString("datelimite")
-            var unTask: Task = Task(leNom, laDate)
+            val jsonObj = jsonTab.getJSONObject(i)
+            val leNom: String = jsonObj.getString("nom")
+            val laDate: String = jsonObj.getString("datelimite")
+            val laCategorie: Int = jsonObj.getInt("idCategorie")
+            val unTask = Task(leNom, laDate, laCategorie)
             sgbd.insertTask(unTask)
             lesTasks.add(unTask)
             lesId.add((i + 1))
@@ -172,15 +185,14 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
     // Lecture d'un fichier JSON local
     private fun lectureFichierLocal(): String {
         val inputStream: InputStream = assets.open("les_task.json")
-        var br: BufferedReader? = inputStream.bufferedReader()
-        val builder = StringBuilder()
         var fichierJson: String? = null
         try {
             fichierJson = inputStream.bufferedReader().readText()
             Log.i("json", "-> $fichierJson")
         } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return fichierJson!!
+        return fichierJson ?: ""
     }
 
     // Gestion du clic sur un élément de la liste des tâches
@@ -188,16 +200,17 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
         val intent = Intent(this, ModificationTaskActivity::class.java)
         intent.putExtra(TASK_NOM, lesTasks[position].nom)
         intent.putExtra(TASK_DATE, lesTasks[position].dateLimite)
+        intent.putExtra(TASK_CATEGORIE, lesTasks[position].idCategorie)
         intent.putExtra(TASK_POS, position)
         modificationTaskActivityResult.launch(intent)
     }
 
     // Gestion du clic sur le bouton de suppression d'une tâche
     override fun onSuppClicked(position: Int) {
-        var task_sup: String = lesTasks[position].nom
-        var builder = AlertDialog.Builder(this)
-        builder.setTitle("Suppression de la tâche : ${lesTasks[position].nom}")
-            .setMessage("Etes-vous sur de vouloir supprimer cette tâche ?")
+        val taskSup = lesTasks[position].nom
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Suppression de la tâche : $taskSup")
+            .setMessage("Etes-vous sûr de vouloir supprimer cette tâche ?")
             .setIcon(android.R.drawable.ic_menu_delete)
             .setPositiveButton("Supprimer") { dialog, _ ->
                 dialog.dismiss()
@@ -205,12 +218,11 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
                 lesTasks.removeAt(position)
                 taskRecyclerView.adapter?.notifyItemRemoved(position)
                 runOnUiThread {
-                    Toast.makeText(this, "La tache ${task_sup} a été supprimé", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "La tâche $taskSup a été supprimée", Toast.LENGTH_LONG).show()
                 }
             }
             .setNegativeButton("Annuler", null)
-        var alertDialog = builder.create()
+        val alertDialog = builder.create()
         alertDialog.show()
     }
-
 }

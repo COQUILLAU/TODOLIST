@@ -21,61 +21,51 @@ class DAOTask() {
         Log.i("sgbd", " test base v2 : " + cursor.getInt(0));
         return cursor.getInt(0);
         close()
+
     }
 
     // requête delete
-    fun deleteTask(nom: String, i: Int) {
+    fun deleteTask(nom: String, id: Int) {
         open()
         val colonne = "id = ?"
-        val args = arrayOf( "$i")
+        val args = arrayOf( "$id")
         maBase.delete("Task",colonne, args )
         close()
     }
     // requête select * from Task (table)
     fun getLesTasksAvecId(): MutableMap<Int, Task> {
-        // ouverture en lecture seule pour les getters
         maBase = monBDHelper.readableDatabase
-        // le select sera réalisé via l'ORM
         val cursor = maBase.query("Task",
-            arrayOf( "id", "nom",
-                "datelimite"
-            ),
-            null, null, null, null,
-            "nom"
+            arrayOf("id", "nom", "datelimite", "idCategorie"),
+            null, null, null, null, "nom"
         )
-        var lesTasks: MutableList<Task> = mutableListOf<Task>()
-        var lesId: MutableList<Int> = mutableListOf<Int>()
-        var laTableTask: MutableMap<Int, Task> = mutableMapOf<Int, Task>()
 
-        // il faut traiter le cursor qui récupère
-        // le record set du select (résultat)
-        // est-ce que le cursor contient des lignes ?
-        if(cursor.count>0) {
-            // s'il n'est pas vide, on le parcourt
+        val laTableTask = mutableMapOf<Int, Task>()
+
+        if (cursor.count > 0) {
             while (cursor.moveToNext()) {
-                // on instancie un jeu avec les colonnes de la requête
-                var unTask =
-                    Task(cursor.getString(1), cursor.getString(2))
-                // on ajoute le jeu à la liste
-                lesTasks.add(unTask)
-                lesId.add(cursor.getInt(0))
-                laTableTask.put(cursor.getInt(0),unTask)
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val nom = cursor.getString(cursor.getColumnIndexOrThrow("nom"))
+                val datelimite = cursor.getString(cursor.getColumnIndexOrThrow("datelimite"))
+                val idCategorie = cursor.getInt(cursor.getColumnIndexOrThrow("idCategorie"))
+                Log.i("getLesTasksAvecId", "Task: $nom, Date: $datelimite, Category: $idCategorie") // Debug Log
+                val unTask = Task(nom, datelimite, idCategorie)
+                laTableTask[id] = unTask
             }
         }
+        cursor.close()
         close()
         return laTableTask
     }
+
     // requête select * from Task
     fun getLesTask(): MutableList<Task> {
         // ouverture en lecture seule pour les getters
         maBase = monBDHelper.readableDatabase
         // le select sera réalisé via l'ORM
         val cursor = maBase.query("Task",
-            arrayOf( "nom",
-                "datelimite"
-            ),
-            null, null, null, null,
-            "nom"
+            arrayOf("nom", "datelimite", "idCategorie"),
+            null, null, null, null, "nom"
         )
         var lesTasks: MutableList<Task> = mutableListOf<Task>()
         // il faut traiter le cursor qui récupère
@@ -85,8 +75,10 @@ class DAOTask() {
             // s'il n'est pas vide, on le parcourt
             while (cursor.moveToNext()) {
                 // on instancie un jeu avec les colonnes de la requête
-                var unTask =
-                    Task(cursor.getString(0), cursor.getString(1))
+                val nom = cursor.getString(cursor.getColumnIndexOrThrow("nom"))
+                val datelimite = cursor.getString(cursor.getColumnIndexOrThrow("datelimite"))
+                val idCategorie = cursor.getInt(cursor.getColumnIndexOrThrow("idCategorie"))
+                val unTask = Task(nom, datelimite, idCategorie)
                 // on ajoute le jeu à la liste
                 lesTasks.add(unTask)
             }
@@ -96,16 +88,15 @@ class DAOTask() {
     }
 
     // requête update
-    fun updateTask(unTask: Task, i: Int) : Int {
+    fun updateTask(unTask: Task, id: Int): Int {
         open()
-        val values = ContentValues()
-        values.put("nom", unTask.nom)
-        values.put("datelimite",unTask.dateLimite)
-        Log.i("updateTask","nom -> ${unTask.nom} date ->${unTask.dateLimite}")
-        val colonne = "id = ?"
-        val args = arrayOf( "$i")
-        val result = maBase.update("Task", values, colonne, args).toInt()
-        Log.i("updateTask","result ->  $result values -> ${values.toString()}")
+        val values = ContentValues().apply {
+            put("nom", unTask.nom)
+            put("datelimite", unTask.dateLimite)
+            put("idCategorie", unTask.idCategorie)
+        }
+        val result = maBase.update("Task", values, "id = ?", arrayOf("$id")).toInt()
+        Log.i("updateTask", "result ->  $result values -> ${values.toString()}")
         close()
         return result
     }
@@ -121,12 +112,38 @@ class DAOTask() {
         val values = ContentValues()
         values.put("nom", unTask.nom)
         values.put("datelimite",unTask.dateLimite)
+        values.put("idCategorie", unTask.idCategorie)
         // on exécute la requête
         // et on retourne son résultat (échec/réussite)
         val result = maBase.insert("Task",null,values).toInt()
         close()
         return result
     }
+
+    // Ajouter une méthode pour récupérer les catégories
+    fun getLesCategories(): MutableList<Categorie> {
+        open()
+        val cursor = maBase.query(
+            "Categorie",
+            arrayOf("id", "nom"),
+            null, null, null, null,
+            "nom"
+        )
+        var lesCategories: MutableList<Categorie> = mutableListOf()
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val nom = cursor.getString(cursor.getColumnIndexOrThrow("nom"))
+                val unCategorie = Categorie(id, nom)
+                lesCategories.add(unCategorie)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        close()
+        return lesCategories
+    }
+
+
      fun init(context: Context) {
         monBDHelper = BDHelper(context)
     }

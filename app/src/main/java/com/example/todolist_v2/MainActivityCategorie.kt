@@ -70,13 +70,14 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 val nomC = data?.getStringExtra(CATEGORIE_NOM)
-                val nouvelleCategorie = Categorie(nomC.toString())
-                sgbd.insertCategorie(nouvelleCategorie)
+                val nouvelleCategorie = Categorie(0, nomC.toString())  // L'id sera attribué automatiquement par la base de données
+                val id = sgbd.insertCategorie(nouvelleCategorie)  // Insère la catégorie dans la base de données et récupère l'ID attribué
+                nouvelleCategorie.id = id.toInt()  // Met à jour l'ID de la catégorie avec celui attribué par la base de données
                 lesCategories.add(0, nouvelleCategorie)
-                Log.i("categorie", "Categorie ajouter ${lesCategories.toString()}")
+                Log.i("categorie", "Categorie ajoutée $nouvelleCategorie")
                 categorieRecyclerView.adapter?.notifyDataSetChanged()
                 runOnUiThread {
-                    Toast.makeText(this, "La catégorie a été ajouté", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "La catégorie a été ajoutée", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -158,8 +159,9 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
         var jsonTab = JSONArray(jsonFic)
         for (i in 0 until jsonTab.length()) {
             var jsonObj = jsonTab.getJSONObject(i)
+            var id: Int = jsonObj.getInt("id")
             var leNom: String = jsonObj.getString("nom")
-            var uneCategorie: Categorie = Categorie(leNom)
+            var uneCategorie: Categorie = Categorie(id, leNom)
             sgbd.insertCategorie(uneCategorie)
             lesCategories.add(uneCategorie)
         }
