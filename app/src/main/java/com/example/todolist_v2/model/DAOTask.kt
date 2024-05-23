@@ -32,7 +32,7 @@ class DAOTask() {
         close()
     }
     // requête select * from Task (table)
-    fun getLesJeuxAvecId(): MutableMap<Int, Task> {
+    fun getLesTasksAvecId(): MutableMap<Int, Task> {
         // ouverture en lecture seule pour les getters
         maBase = monBDHelper.readableDatabase
         // le select sera réalisé via l'ORM
@@ -65,7 +65,7 @@ class DAOTask() {
         close()
         return laTableTask
     }
-    // requête select * from jeux
+    // requête select * from Task
     fun getLesTask(): MutableList<Task> {
         // ouverture en lecture seule pour les getters
         maBase = monBDHelper.readableDatabase

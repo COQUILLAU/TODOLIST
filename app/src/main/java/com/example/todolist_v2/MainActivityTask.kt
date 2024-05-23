@@ -140,7 +140,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
         if (sgbd.testBase() > 0) {
             // Si oui, les récupérer
             lesTasks = sgbd.getLesTask()
-            laTableTask = sgbd.getLesJeuxAvecId()
+            laTableTask = sgbd.getLesTasksAvecId()
             lesId = laTableTask.keys.toMutableList()
         } else {
             // Sinon, les insérer à partir d'un fichier JSON
