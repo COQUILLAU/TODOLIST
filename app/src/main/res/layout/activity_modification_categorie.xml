@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ModificationCategorieActivity">
+    tools:context=".crud_categorie.ModificationCategorieActivity">
 
     <LinearLayout
         android:id="@+id/taskLayout"
@@ -31,9 +31,10 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="1250px"
-            android:layout_height="60dp"
-            android:padding="12dp"
+            android:layout_height="80dp"
+            android:paddingLeft="24dp"
             android:background="#212121"
+            android:gravity="center_vertical"
             android:text="Modifier une catégorie"
             android:textColor="@android:color/white"
             android:textSize="24sp"

@@ -1,9 +1,11 @@
-package com.example.todolist_v2
+package com.example.todolist_v2.crud_task
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
@@ -14,15 +16,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist_v2.MainActivityDashboard
+import com.example.todolist_v2.crud_categorie.MainActivityCategorie
+import com.example.todolist_v2.R
 import com.example.todolist_v2.model.DAOTask
-import com.example.todolist_v2.model.DAOCategorie
 import com.example.todolist_v2.model.Task
 import com.example.todolist_v2.support.TaskAdapter
 import com.example.todolist_v2.support.TaskListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONArray
-import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 
@@ -30,7 +32,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
     // RecyclerView pour afficher les tâches
     lateinit var taskRecyclerView: RecyclerView
     // Bouton flottant pour ajouter une nouvelle tâche
-    lateinit var ajouterTask: FloatingActionButton
+    lateinit var ajouterTask: LinearLayout
     // DAO pour gérer les opérations sur les tâches
     lateinit var sgbd: DAOTask
     // Liste de tâches
@@ -102,30 +104,23 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main_task)
 
+        // Initialiser les données en dur des tâches
+        initDonneesEnDurTask()
+        // Gérer le clic sur le bouton flottant pour ajouter une tâche
+        ajouterTask = findViewById(R.id.tache_ajouter)
+        ajouterTask.setOnClickListener {
+            val intent = Intent(this, CreationTaskActivity::class.java)
+            creationTaskActivityResult.launch(intent)
+        }
+
         // Gestion de la navigation par le bas
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_task -> {
-                    // Initialiser les données en dur des tâches
-                    initDonneesEnDurTask()
-                    // Gérer le clic sur le bouton flottant pour ajouter une tâche
-                    ajouterTask = findViewById(R.id.tache_ajouter)
-                    ajouterTask.setOnClickListener {
-                        val intent = Intent(this, CreationTaskActivity::class.java)
-                        creationTaskActivityResult.launch(intent)
-                    }
-                    // Ajuster les marges pour éviter le chevauchement avec la barre de navigation
-                    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-                        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                        v.setPadding(
-                            systemBars.left,
-                            systemBars.top,
-                            systemBars.right,
-                            systemBars.bottom
-                        )
-                        insets
-                    }
+                R.id.navigation_dashboard -> {
+                    // Redirection vers l'activité des catégories
+                    val intent = Intent(this, MainActivityDashboard::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.navigation_categorie -> {

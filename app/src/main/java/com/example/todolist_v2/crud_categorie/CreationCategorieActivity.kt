@@ -1,4 +1,4 @@
-package com.example.todolist_v2
+package com.example.todolist_v2.crud_categorie
 
 import android.app.Activity
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.todolist_v2.CATEGORIE_NOM
+import com.example.todolist_v2.R
 
 class CreationCategorieActivity : AppCompatActivity() {
     lateinit var btn_crea: Button

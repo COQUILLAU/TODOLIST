@@ -1,4 +1,4 @@
-package com.example.todolist_v2
+package com.example.todolist_v2.crud_task
 
 import android.app.Activity
 import android.content.Intent
@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.todolist_v2.R
 import com.example.todolist_v2.model.Categorie
 import com.example.todolist_v2.model.DAOTask
 

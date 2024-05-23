@@ -3,7 +3,7 @@
     <item
         android:color="#000"
         android:state_checked="true"
-        android:background="@android:color/transparent"
+        android:background="@android:color/white"
         />
     <item android:color="#AAFFFFFF" />
 </selector>

@@ -1,4 +1,4 @@
-package com.example.todolist_v2
+package com.example.todolist_v2.crud_task
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -6,7 +6,6 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.content.Intent
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.DatePicker
@@ -16,6 +15,7 @@ import android.widget.Spinner
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.todolist_v2.R
 import com.example.todolist_v2.model.Categorie
 import com.example.todolist_v2.model.DAOTask
 import java.util.*

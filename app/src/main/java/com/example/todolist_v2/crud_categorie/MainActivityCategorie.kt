@@ -1,10 +1,11 @@
 // MainActivityCategorie.kt
-package com.example.todolist_v2
+package com.example.todolist_v2.crud_categorie
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
@@ -15,13 +16,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist_v2.CATEGORIE_NOM
+import com.example.todolist_v2.CATEGORIE_POS
+import com.example.todolist_v2.R
+import com.example.todolist_v2.crud_task.MainActivityTask
 import com.example.todolist_v2.model.DAOCategorie
 import com.example.todolist_v2.model.Categorie
-import com.example.todolist_v2.model.Task
 import com.example.todolist_v2.support.CategorieAdapter
 import com.example.todolist_v2.support.CategorieListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.IOException
@@ -38,7 +41,7 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
     // Table de correspondance entre ID et categorie
     var laTableCategorie: MutableMap<Int, Categorie> = mutableMapOf<Int, Categorie>()
 
-    lateinit var ajouterCategorie: FloatingActionButton
+    lateinit var ajouterCategorie: LinearLayout
 
     // Gestion du résultat de l'activité de modification d'une catégorie
     private val modificationCategorieActivityResult =
@@ -88,6 +91,15 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
         enableEdgeToEdge()
         setContentView(R.layout.activity_main_categorie)
 
+        // Initialiser les données en dur des catégories
+        initDonneesEnDurCategorie()
+        // Gérer le clic sur le bouton flottant pour ajouter une catégorie
+        ajouterCategorie = findViewById(R.id.cat_ajouter)
+        ajouterCategorie.setOnClickListener {
+            val intent = Intent(this, CreationCategorieActivity::class.java)
+            creationCategorieActivityResult.launch(intent)
+        }
+
         // Gestion de la navigation par le bas
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -98,34 +110,10 @@ class MainActivityCategorie : AppCompatActivity(), CategorieListener{
                     startActivity(intent)
                     true
                 }
-                R.id.navigation_categorie -> {
-                    // Initialiser les données en dur des catégories
-                    initDonneesEnDurCategorie()
-                    // Gérer le clic sur le bouton flottant pour ajouter une catégorie
-                    ajouterCategorie = findViewById(R.id.cat_ajouter)
-                    ajouterCategorie.setOnClickListener {
-                        val intent = Intent(this, CreationCategorieActivity::class.java)
-                        creationCategorieActivityResult.launch(intent)
-                    }
-                    // Ajuster les marges pour éviter le chevauchement avec la barre de navigation
-                    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-                        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                        v.setPadding(
-                            systemBars.left,
-                            systemBars.top,
-                            systemBars.right,
-                            systemBars.bottom
-                        )
-                        insets
-                    }
-                    true
-                }
                 else -> false
             }
         }
 
-        // Initialisation des données en dur des catégories
-        initDonneesEnDurCategorie()
     }
 
     // Initialisation des données en dur pour les catégories

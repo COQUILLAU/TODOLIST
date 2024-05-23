@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:padding="15dp"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="@drawable/border_gray">
 
 
     <LinearLayout
@@ -24,7 +25,7 @@
             android:id="@+id/finishSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="#FF4081"
+            android:buttonTint="#000"
             android:elevation="10dp"
             android:layout_marginEnd="8dp"/>
 
@@ -66,8 +67,8 @@
                 app:layout_constraintTop_toTopOf="parent">
             <!-- TextView pour la date limite -->
                 <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="26dp"
+                    android:layout_height="28dp"
                     android:background="@android:color/transparent"
                     android:contentDescription="btn_sup"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -79,9 +80,46 @@
                     android:id="@+id/task_dateLimite"
                     android:layout_width="129dp"
                     android:layout_height="wrap_content"
+
                     android:maxEms="5"
                     android:layout_marginLeft="5dp"
                     android:text="datelimite"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="40px"
+                    android:textStyle="bold"
+                    tools:ignore="MissingConstraints" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/taskLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@id/btn_supp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <!-- TextView pour la date limite -->
+                <ImageButton
+                    android:layout_width="26dp"
+                    android:layout_height="28dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="btn_sup"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@android:drawable/checkbox_off_background" />
+
+                <TextView
+                    android:id="@+id/task_idCategorie"
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+
+                    android:maxEms="5"
+                    android:layout_marginLeft="5dp"
+                    android:text="idCategorie"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="38px"
                     android:textStyle="bold"
@@ -89,23 +127,16 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/task_idCategorie"
-                android:layout_width="237dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:maxEms="5"
-                android:text="idCategorie"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="38px"
-                android:textStyle="bold"
-                tools:ignore="MissingConstraints" />
 
         </LinearLayout>
 
 
 
+
+
     </LinearLayout>
+
+
 
     <ImageButton
         android:id="@+id/btn_supp"

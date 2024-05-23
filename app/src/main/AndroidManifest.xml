@@ -13,15 +13,15 @@
         android:theme="@style/Theme.Todolist_V2"
         tools:targetApi="31">
 
-        <activity android:name=".ModificationCategorieActivity" android:exported="false"/>
-        <activity android:name=".CreationCategorieActivity" android:exported="false"/>
-        <activity android:name=".MainActivityCategorie" android:exported="true"/>
+        <activity android:name=".crud_categorie.ModificationCategorieActivity" android:exported="false"/>
+        <activity android:name=".crud_categorie.CreationCategorieActivity" android:exported="false"/>
+        <activity android:name=".crud_categorie.MainActivityCategorie" android:exported="true"/>
 
-        <activity android:name=".ModificationTaskActivity" android:exported="false" />
-        <activity android:name=".CreationTaskActivity" android:exported="false"/>
-        <activity android:name=".MainActivityTask" android:exported="true">
+        <activity android:name=".crud_task.ModificationTaskActivity" android:exported="false" />
+        <activity android:name=".crud_task.CreationTaskActivity" android:exported="false"/>
+        <activity android:name=".crud_task.MainActivityTask" android:exported="true"/>
 
-
+        <activity android:name=".MainActivityDashboard" android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
