@@ -12,17 +12,43 @@ class DAOTask() {
     // coder les requêtes
 
     // test base (java)
-    fun testBase(): Int
-    {
+    fun testBase(): Int {
         open()
-        val req: String = "select count(nom) from Task";
-        val cursor = maBase.rawQuery (req, null, null);
-        cursor.moveToNext();
-        Log.i("sgbd", " test base v2 : " + cursor.getInt(0));
-        return cursor.getInt(0);
+
+        // Requête pour compter le nombre de tâches dans la table Task
+        val reqCount: String = "SELECT COUNT(nom) FROM Task"
+        val cursorCount = maBase.rawQuery(reqCount, null)
+        cursorCount.moveToFirst()
+        val count = cursorCount.getInt(0)
+        Log.i("sgbd", "Nombre de tâches dans la base de données : $count")
+        cursorCount.close()
+
+        // Requête pour récupérer toutes les lignes de la table Task
+        val reqTable: String = "SELECT * FROM Task"
+        val cursorTable = maBase.rawQuery(reqTable, null)
+
+        // Affichage des données de la table Task
+        if (cursorTable.count > 0) {
+            Log.i("sgbd", "Contenu de la table Task :")
+            while (cursorTable.moveToNext()) {
+                val id = cursorTable.getInt(cursorTable.getColumnIndex("id"))
+                val nom = cursorTable.getString(cursorTable.getColumnIndex("nom"))
+                val dateLimite = cursorTable.getString(cursorTable.getColumnIndex("datelimite"))
+                val idCategorie = cursorTable.getInt(cursorTable.getColumnIndex("idCategorie"))
+                val fait = cursorTable.getInt(cursorTable.getColumnIndex("fait"))
+
+                Log.i("sgbd", "   id: $id, nom: $nom, date limite: $dateLimite, idCategorie: $idCategorie, fait: $fait")
+            }
+        } else {
+            Log.i("sgbd", "La table Task est vide.")
+        }
+
+        cursorTable.close()
         close()
 
+        return count
     }
+
 
     // requête delete
     fun deleteTask(nom: String, id: Int) {
@@ -32,11 +58,13 @@ class DAOTask() {
         maBase.delete("Task",colonne, args )
         close()
     }
-    // requête select * from Task (table)
+    // requête select * from Task avec id
     fun getLesTasksAvecId(): MutableMap<Int, Task> {
+        open()
         maBase = monBDHelper.readableDatabase
-        val cursor = maBase.query("Task",
-            arrayOf("id", "nom", "datelimite", "idCategorie"),
+        val cursor = maBase.query(
+            "Task",
+            arrayOf("id", "nom", "datelimite", "idCategorie", "fait"),
             null, null, null, null, "nom"
         )
 
@@ -48,8 +76,8 @@ class DAOTask() {
                 val nom = cursor.getString(cursor.getColumnIndexOrThrow("nom"))
                 val datelimite = cursor.getString(cursor.getColumnIndexOrThrow("datelimite"))
                 val idCategorie = cursor.getInt(cursor.getColumnIndexOrThrow("idCategorie"))
-                Log.i("getLesTasksAvecId", "Task: $nom, Date: $datelimite, Category: $idCategorie") // Debug Log
-                val unTask = Task(nom, datelimite, idCategorie)
+                val fait = cursor.getInt(cursor.getColumnIndexOrThrow("fait")) == 1
+                val unTask = Task( nom, datelimite, idCategorie, fait)
                 laTableTask[id] = unTask
             }
         }
@@ -60,29 +88,26 @@ class DAOTask() {
 
     // requête select * from Task
     fun getLesTask(): MutableList<Task> {
-        // ouverture en lecture seule pour les getters
+        open()
         maBase = monBDHelper.readableDatabase
-        // le select sera réalisé via l'ORM
-        val cursor = maBase.query("Task",
-            arrayOf("nom", "datelimite", "idCategorie"),
+        val cursor = maBase.query(
+            "Task",
+            arrayOf("nom", "datelimite", "idCategorie", "fait"),
             null, null, null, null, "nom"
         )
-        var lesTasks: MutableList<Task> = mutableListOf<Task>()
-        // il faut traiter le cursor qui récupère
-        // le record set du select (résultat)
-        // est-ce que le cursor contient des lignes ?
-        if(cursor.count>0) {
-            // s'il n'est pas vide, on le parcourt
+        val lesTasks = mutableListOf<Task>()
+
+        if (cursor.count > 0) {
             while (cursor.moveToNext()) {
-                // on instancie un jeu avec les colonnes de la requête
                 val nom = cursor.getString(cursor.getColumnIndexOrThrow("nom"))
                 val datelimite = cursor.getString(cursor.getColumnIndexOrThrow("datelimite"))
                 val idCategorie = cursor.getInt(cursor.getColumnIndexOrThrow("idCategorie"))
-                val unTask = Task(nom, datelimite, idCategorie)
-                // on ajoute le jeu à la liste
+                val fait = cursor.getInt(cursor.getColumnIndexOrThrow("fait")) == 1
+                val unTask = Task( nom, datelimite, idCategorie, fait)
                 lesTasks.add(unTask)
             }
         }
+        cursor.close()
         close()
         return lesTasks
     }
@@ -113,6 +138,7 @@ class DAOTask() {
         values.put("nom", unTask.nom)
         values.put("datelimite",unTask.dateLimite)
         values.put("idCategorie", unTask.idCategorie)
+        values.put("fait", 0)
         // on exécute la requête
         // et on retourne son résultat (échec/réussite)
         val result = maBase.insert("Task",null,values).toInt()
@@ -141,6 +167,18 @@ class DAOTask() {
         cursor.close()
         close()
         return lesCategories
+    }
+
+    // Mettre à jour le champ 'fait' d'une tâche dans la base de données
+    fun updateFait(id: Int, fait: Boolean): Int {
+        open()
+        val values = ContentValues().apply {
+            put("fait", fait) // Mettre à jour le champ 'fait' avec la nouvelle valeur
+        }
+        val result = maBase.update("Task", values, "id = ?", arrayOf(id.toString()))
+        Log.i("updateFait", "Updated Task avec l'id=$id. fait = $fait")
+        close()
+        return result
     }
 
 

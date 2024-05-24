@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toStartOf="@id/btn_supp">
 
         <CheckBox
-            android:id="@+id/finishSwitch"
+            android:id="@+id/fait"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:buttonTint="#000"
@@ -92,7 +92,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/taskLayout3"
+                android:id="@+id/taskLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"

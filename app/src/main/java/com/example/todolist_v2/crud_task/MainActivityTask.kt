@@ -43,7 +43,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
     var laTableTask: MutableMap<Int, Task> = mutableMapOf()
     var lesCategories: MutableMap<Int, String> = mutableMapOf()
 
-    // Constants for passing data between activities
+    // Constants (meme s'il y a deja un fichier TaskConstantes
     companion object {
         const val TASK_NOM = "TASK_NOM"
         const val TASK_DATE = "TASK_DATE"
@@ -87,7 +87,7 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
                 val nomT = data?.getStringExtra(TASK_NOM)
                 val dateT = data?.getStringExtra(TASK_DATE)
                 val categorieT = data?.getIntExtra(TASK_CATEGORIE, -1)
-                val nouveauTask = Task(nomT!!, dateT!!, categorieT!!)
+                val nouveauTask = Task( nomT!!, dateT!!, categorieT!!, false,)
                 sgbd.insertTask(nouveauTask)
                 lesTasks.add(0, nouveauTask)
                 Log.i("tâche", "tâche ajoutée ${lesTasks.toString()}")
@@ -170,7 +170,8 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
             val leNom: String = jsonObj.getString("nom")
             val laDate: String = jsonObj.getString("datelimite")
             val laCategorie: Int = jsonObj.getInt("idCategorie")
-            val unTask = Task(leNom, laDate, laCategorie)
+            val lafait: Boolean = jsonObj.getBoolean("fait")
+            val unTask = Task(leNom, laDate, laCategorie, lafait)
             sgbd.insertTask(unTask)
             lesTasks.add(unTask)
             lesId.add((i + 1))
@@ -219,5 +220,17 @@ class MainActivityTask : AppCompatActivity(), TaskListener {
             .setNegativeButton("Annuler", null)
         val alertDialog = builder.create()
         alertDialog.show()
+    }
+
+    override fun onTaskCheckedChanged(position: Int, isChecked: Boolean) {
+        val task = lesTasks[position]
+        task.fait = isChecked
+
+        // Mettre à jour la tâche dans la base de données
+        sgbd.updateFait(lesId[position], isChecked)
+
+        // Notification à l'utilisateur
+        val status = if (isChecked) "complétée" else "non complétée"
+        Toast.makeText(this, "Tâche ${task.nom} marquée comme $status", Toast.LENGTH_SHORT).show()
     }
 }

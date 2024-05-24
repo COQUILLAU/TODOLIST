@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:padding="15dp"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="@drawable/border_gray">
 
 
     <LinearLayout
@@ -26,26 +27,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:padding="8dp"
             app:layout_constraintEnd_toStartOf="@id/btn_supp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageButton
+                android:layout_width="26dp"
+                android:layout_height="28dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="btn_sup"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/checkbox_off_background" />
             <!-- TextView pour le nom de la tâche -->
             <TextView
                 android:id="@+id/categorie_nom"
-                android:textSize="48px"
                 android:layout_width="244dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:text="Categorie nom"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:textSize="48px" />
 
 
-
-
-
-    </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <ImageButton

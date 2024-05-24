@@ -32,10 +32,9 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="1250px"
-            android:layout_height="80dp"
-            android:paddingLeft="24dp"
+            android:layout_height="60dp"
+            android:padding="12dp"
             android:background="#212121"
-            android:gravity="center_vertical"
             android:text="Ajoutez une tâche"
             android:textColor="@android:color/white"
             android:textSize="24sp"
@@ -47,7 +46,7 @@
     <EditText
         android:id="@+id/task_name"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
@@ -62,7 +61,7 @@
     <EditText
         android:id="@+id/task_dateLimite"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
@@ -79,7 +78,7 @@
     <Spinner
         android:id="@+id/spinner_categories"
         android:layout_width="344dp"
-        android:layout_height="51dp"
+        android:layout_height="60dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
